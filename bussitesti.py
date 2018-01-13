@@ -90,19 +90,21 @@ def get_busses(url, arrivals):
                 or ((json_data[0]['code'] == right_busses[1][1]) and (bus['code'] == right_busses[0][2]))
                 or ((json_data[0]['code'] == right_busses[1][2]) and (bus['code'] == right_busses[0][3]))):
                     arrivals.append([bus['code'], bus['time']])
-                 
-urls = [ 'http://api.publictransport.tampere.fi/prod/?request=stop&user=%s&pass=%s&code=3723&format=json&dep_limit=20&time_limit=360' % (cre.username, cre.passphrase)
-        , 'http://api.publictransport.tampere.fi/prod/?request=stop&user=%s&pass=%s&code=3577&format=json&dep_limit=20&time_limit=360' % (cre.username, cre.passphrase)
-        , 'http://api.publictransport.tampere.fi/prod/?request=stop&user=%s&pass=%s&code=3737&format=json&dep_limit=20&time_limit=360' % (cre.username, cre.passphrase)]
+    
+    
+    
+timelimit = "100"             
+urls = [ 'http://api.publictransport.tampere.fi/prod/?request=stop&user=%s&pass=%s&code=3723&format=json&dep_limit=20&time_limit=%s' % (cre.username, cre.passphrase, timelimit)
+        , 'http://api.publictransport.tampere.fi/prod/?request=stop&user=%s&pass=%s&code=3577&format=json&dep_limit=20&time_limit=%s' % (cre.username, cre.passphrase, timelimit)
+        , 'http://api.publictransport.tampere.fi/prod/?request=stop&user=%s&pass=%s&code=3737&format=json&dep_limit=20&time_limit=%s' % (cre.username, cre.passphrase, timelimit)]
 
 
 arrivals = []
 for url in urls:
     get_busses(url, arrivals)
     
-# Karsitaan jäljellä vain bussit, jotka lähtevät 5 min - 2 h päästä:
+# Karsitaan jäljellä vain bussit, jotka lähtevät 5 min - 100 min päästä:
 
-    
 for bus in arrivals:
     # Koska kello ei mene 26 asti:
     if (bus[1][0:2] == "24"):
@@ -114,15 +116,24 @@ for bus in arrivals:
     bus[1] = int((datetime.combine(date.min, datetime.strptime(bus[1], '%H%M').time()) - datetime.combine(date.min, datetime.now().time())).total_seconds() / 60)
     if bus[1] < -1000:
         bus[1] = 6
-    if ((bus[1] < 5) or (bus[1] > 100)):
-        arrivals.remove(bus)
 
+# Järjestetään lähtöaikajärjestykseen ja poistetaan liian pian lähtevät
 from operator import itemgetter
-#arrivals = sorted(arrivals, key=itemgetter(1))
+arrivals = sorted(arrivals, key=itemgetter(1))
+deletables = []
+i = 0
+while i != -1:
+    # Ei haluta näyttää liian pian lähteviä, joihin ei ehdi kävelemään
+    if arrivals[i][1] < 5:
+        deletables.append(i)
+        i += 1
+    else:
+        i = -1
+for i in sorted(deletables, reverse=True):
+    arrivals.pop(i)
                 
-                
-
-
+for bus in arrivals:
+    print("Bussi", bus[0], "saapuu pysäkille", bus[1], "minuutin kuluttua")
 
 
 

@@ -23,7 +23,9 @@ import credentials as cre
 
 import requests
 import json
+import psycopg2
 from datetime import date, datetime, timedelta
+from operator import itemgetter
 
 # =============================================================================
 # act_url = 'http://data.itsfactory.fi/journeys/api/1/vehicle-activity'
@@ -118,7 +120,7 @@ for bus in arrivals:
         bus[1] = 6
 
 # Järjestetään lähtöaikajärjestykseen ja poistetaan liian pian lähtevät
-from operator import itemgetter
+
 arrivals = sorted(arrivals, key=itemgetter(1))
 deletables = []
 i = 0
@@ -134,6 +136,26 @@ for i in sorted(deletables, reverse=True):
                 
 for bus in arrivals:
     print("Bussi", bus[0], "saapuu pysäkille", bus[1], "minuutin kuluttua")
+    
+values_list = []
+time_now = datetime.now()
+time_now = str(time_now.year) + "-" + str(time_now.month) + "-" + str(time_now.day) + "-" + str(time_now.hour) + "-" + str(time_now.minute) + "-" + str(time_now.second)
+for row in arrivals:
+    values_list.append((row[0], str(row[1]), time_now))
+#values_list = [("1", "1", "1"), ("12", "12", "12"), ("13", "13", "13")]
+# Data kantaan
+    
+
+try:
+    conn = psycopg2.connect("dbname=%s user=%s host=%s password=%s") % (cre.dbname, cre.user, cre.host, cre.password)
+    cur = conn.cursor()
+    sql = 'INSERT INTO busscheduletable(line, time, loadtime) VALUES (%s, %s, %s)'
+    cur.executemany(sql, values_list)
+    conn.commit()
+    cur.close()
+except(Exception, psycopg2.DatabaseError) as error:
+    print(error)
+
 
 
 

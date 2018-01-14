@@ -147,8 +147,10 @@ for row in arrivals:
     
 
 try:
-    conn = psycopg2.connect("dbname=%s user=%s host=%s password=%s") % (cre.dbname, cre.user, cre.host, cre.password)
+    conn = psycopg2.connect("dbname=%s user=%s host=%s password=%s" % (cre.dbname, cre.user, cre.host, cre.password))
     cur = conn.cursor()
+    cur.execute('TRUNCATE busscheduletable;')
+    conn.commit()
     sql = 'INSERT INTO busscheduletable(line, time, loadtime) VALUES (%s, %s, %s)'
     cur.executemany(sql, values_list)
     conn.commit()

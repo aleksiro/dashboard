@@ -5,82 +5,17 @@ Created on Fri Jan 12 18:18:58 2018
 @author: Aleksi Roima
 """
 
-"""
-Vehicle acitivity: Ajoneuvokohtaiset tiedot, milloin milläkin pysäkillä
-TARVITAAN: lineRef, directionRef
-Linjat ja niiltä katseltavat pysäkit
-3, Orivedenkatu, 3723, 12
-directionRef = 1:
-4, Opiskelijankatu 23, 3577, ?
-directionRef = 1
-6, Tieteenkatu 7, 3737, 7
-directionRef = 1
-
-"""
-
 import credentials as cre
 
 
 import requests
 import json
 import psycopg2
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from operator import itemgetter
 
-# =============================================================================
-# act_url = 'http://data.itsfactory.fi/journeys/api/1/vehicle-activity'
-# 
-# act_response = requests.get(act_url)
-# look_list = []
-# if (act_response.ok):
-#     act_json = json.loads(act_response.content)
-#     for line in act_json['body']:
-#         bus_line = line['monitoredVehicleJourney']
-#         if ((bus_line['lineRef'] in wanted[0]) and (bus_line['directionRef'] == "1")):
-#             print("Tuli1")
-#             for stop in bus_line['onwardCalls']:
-#                 if (((bus_line['lineRef'] == wanted[0][0]) and (wanted[1][0] in stop['stopPointRef']))
-#                     #or ((bus_line['lineRef'] == wanted[0][1]) and (wanted[1][1] in stop['stopPointRef']))
-#                     or ((bus_line['lineRef'] == wanted[0][2]) and (wanted[1][2] in stop['stopPointRef']))):
-#                     print("Tuli2")
-#                     look_list.append(bus_line)
-#     
-# =============================================================================
 
-
-
-# =============================================================================
-#     
-# stop_url = 'http://data.itsfactory.fi/journeys/api/1/stop-monitoring?stops=%s' % (wanted_stops)
-# stop_response = requests.get(stop_url)
-# 
-# # Linjan nimi, alkuperäinen saapumisaika, ennustettu saapumisaika
-# arrivals = []
-# if (stop_response.ok):
-#     stop_json = json.loads(stop_response.content)
-#     for key, val in stop_json['body'].items():
-#         for bus_line in val: 
-#             if (bus_line['directionRef'] == "1"):
-#                 arrivals.append([bus_line['lineRef']
-#                 , bus_line['call']['aimedArrivalTime']
-#                 , bus_line['call']['expectedArrivalTime']])
-# 
-# for row in arrivals:
-#     scheduled = datetime.strptime(row[1], '%Y-%m-%dT%H:%M:%S+02:00')
-#     expected = datetime.strptime(row[2], '%Y-%m-%dT%H:%M:%S+02:00')
-#     delay = expected - scheduled
-#     print("Bussilinja: ", row[0], 
-#           "Suunniteltu: ", str(scheduled.hour) + ":" + str(scheduled.minute), 
-#           "Arvioitu: ", str(expected.hour) + ":" + str(expected.minute), 
-#           "Myöhästyy: ", str(int(delay.seconds/60)))
-# # Ei saada kuin noin 10 min eteenpäin
-# =============================================================================
-
-
-#api.publictransport.tampere.fi/prod/?request=stop&user=aleksiroima&pass=kjsfdx1954qpo&code=Vanha&format=json
-
-# Kokeillaan toisesta rajapinnasta jos saisi enemmän dataa
-# Haetaan data ja luodaan lista, joka pitää sisällään tupleja, joissa linjan nimi ja saapumisaika pysäkille
+# Get data and create list which includes tuples that have busline and arrival time to the bus stop
 def get_busses(url, arrivals):
     right_busses = [["3A", "3B", "4", "6"], ["3723", "3577", "3737"]]
     response = requests.get(url)
@@ -93,9 +28,9 @@ def get_busses(url, arrivals):
                 or ((json_data[0]['code'] == right_busses[1][2]) and (bus['code'] == right_busses[0][3]))):
                     arrivals.append([bus['code'], bus['time']])
     
-    
-    
-timelimit = "100"             
+# What's the longest time that we will want to see the busses arrival
+timelimit = "100"
+# The needed API urls to get the data
 urls = [ 'http://api.publictransport.tampere.fi/prod/?request=stop&user=%s&pass=%s&code=3723&format=json&dep_limit=20&time_limit=%s' % (cre.username, cre.passphrase, timelimit)
         , 'http://api.publictransport.tampere.fi/prod/?request=stop&user=%s&pass=%s&code=3577&format=json&dep_limit=20&time_limit=%s' % (cre.username, cre.passphrase, timelimit)
         , 'http://api.publictransport.tampere.fi/prod/?request=stop&user=%s&pass=%s&code=3737&format=json&dep_limit=20&time_limit=%s' % (cre.username, cre.passphrase, timelimit)]
@@ -108,7 +43,7 @@ for url in urls:
 # Karsitaan jäljellä vain bussit, jotka lähtevät 5 min - 100 min päästä:
 
 for bus in arrivals:
-    # Koska kello ei mene 26 asti:
+    # The clock doesnt continue until 26 like the data sais
     if (bus[1][0:2] == "24"):
         bus[1] = bus[1].replace("24", "00", 1)
     elif (bus[1][0:2] == "25"):
@@ -116,36 +51,42 @@ for bus in arrivals:
     elif (bus[1][0:2] == "26"):
         bus[1] = bus[1].replace("26", "02", 1)
     bus[1] = int((datetime.combine(date.min, datetime.strptime(bus[1], '%H%M').time()) - datetime.combine(date.min, datetime.now().time())).total_seconds() / 60)
+    # Bug that will occur during midnight. Quickfix, not a good one
     if bus[1] < -1000:
         bus[1] = 6
 
-# Järjestetään lähtöaikajärjestykseen ja poistetaan liian pian lähtevät
-
+# Sort by arrival time
 arrivals = sorted(arrivals, key=itemgetter(1))
 deletables = []
 i = 0
 while i != -1:
-    # Ei haluta näyttää liian pian lähteviä, joihin ei ehdi kävelemään
-    if arrivals[i][1] < 5:
+    # Don't show busses that arrive too fast and we don't have time to walk for
+    if arrivals[i][1] < 3:
         deletables.append(i)
         i += 1
     else:
         i = -1
 for i in sorted(deletables, reverse=True):
     arrivals.pop(i)
-                
+
+#Print information about useful busses            
 for bus in arrivals:
-    print("Bussi", bus[0], "saapuu pysäkille", bus[1], "minuutin kuluttua")
-    
+    print("Bus", bus[0], "will arrive to stop after", bus[1], "minutes")
+
+# Edit the data in such form that it will be easily written to the table, also add time of upload
 values_list = []
 time_now = datetime.now()
 time_now = str(time_now.year) + "-" + str(time_now.month) + "-" + str(time_now.day) + "-" + str(time_now.hour) + "-" + str(time_now.minute) + "-" + str(time_now.second)
+minutes = []
+busses = []
 for row in arrivals:
     values_list.append((row[0], str(row[1]), time_now))
-#values_list = [("1", "1", "1"), ("12", "12", "12"), ("13", "13", "13")]
-# Data kantaan
-    
+    minutes.append(row[1])
+    busses.append(row[0])
 
+
+
+# Add data to database
 try:
     conn = psycopg2.connect("dbname=%s user=%s host=%s password=%s" % (cre.dbname, cre.user, cre.host, cre.password))
     cur = conn.cursor()
@@ -158,28 +99,4 @@ try:
 except(Exception, psycopg2.DatabaseError) as error:
     print(error)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                
-                
-                
+            

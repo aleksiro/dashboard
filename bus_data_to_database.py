@@ -81,9 +81,6 @@ minutes = []
 busses = []
 for row in arrivals:
     values_list.append((row[0], str(row[1]), time_now))
-    minutes.append(row[1])
-    busses.append(row[0])
-
 
 
 # Add data to database

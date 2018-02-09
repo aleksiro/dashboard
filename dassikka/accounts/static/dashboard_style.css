@@ -1,0 +1,23 @@
+/* Create two equal columns that floats next to each other */
+body
+{
+	margin: 0;
+	padding: 0;
+	background: url('concrete-texture.png');
+	font-family: open sans;
+}
+
+.column {
+    text-align: center;
+    float: left;
+    width: 48%;
+    padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    text-align: center;
+    content: "";
+    display: table;
+    clear: both;
+}

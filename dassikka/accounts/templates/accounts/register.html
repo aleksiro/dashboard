@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% load static %}
+  <form method="post">
+    <head>
+        <meta charset="utf-8">
+        <title> Tunnusten luonti </title>
+        <link rel="stylesheet" href={% static "registration_style.css" %}>
+    </head>
+    <body>
+        <p>
+        </p>
+        <div class="container">
+            <div class="left"></div>
+            <div class="right">
+                <div class="formBox">
+                    <form name="RegistrationForm" action="/register/" method="post">
+                        <p> Käyttäjätunnus </p>
+                        {% csrf_token %}
+                        {% if next %}
+                          <input type="hidden" name="next" value="{{ next }}" />
+                        {% endif %}
+                        <input type="text" name="username" autofocus required id="username" maxlength="150" />
+                        <p> Etunimi </p>
+                        <p>
+                            <input type="text" name="first_name" id="first_name">
+                        </p>
+                        <p> Sukunimi </p>
+                        <p>
+                            <input type="text" name="last_name" id="last_name">
+                        </p>
+                        <p> Sähköposti </p>
+                        <p>
+                            <input type="text" name="email" id="email">
+                        </p>
+                        <p> Salasana </p>
+                        <p>
+                            <input type="password" name="password1" id="password1">
+                        </p>
+                        <p> Toista salasana </p>
+                        <p>
+                            <input type="password" name="password2" id="password2">
+                            <input type="submit" name="" value="Rekisteröidy">
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+  </form>
+{% endblock %}

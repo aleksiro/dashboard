@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% load static %}
+  <head>
+      <meta charset="utf-8">
+      <title> Profiili </title>
+      <link rel="stylesheet" href={% static "registration_style.css" %}>
+  </head>
+  <body>
+      <p>
+      </p>
+      <div class="container">
+          <div class="left"></div>
+          <div class="right">
+              <div class="formBox">
+                {% csrf_token %}
+                <p> Username: {{ user }} </p>
+                <p> First name: {{ user.first_name }} </p>
+                <p> Last name: {{ user.last_name }} </p>
+                <p> Email: {{ user.email }} </p>
+                <form action="/profile/edit/"><p>
+                    <input type="submit" value="Muokkaa tietoja">
+                </p></form>
+                <form action="/profile/password/"><p>
+                      <input type="submit" value="Vaihda salasanaa">
+                </p></form>
+              </div>
+          </div>
+      </div>
+  </body>
+
+{% endblock %}

@@ -16,7 +16,12 @@ times = []
 try:
     conn = psycopg2.connect("dbname=%s user=%s host=%s password=%s" % (cre.dbname, cre.user, cre.host, cre.password))
     cur = conn.cursor()
-    cur.execute('SELECT * FROM busscheduletable')
+    sql = """   SELECT line, time 
+                FROM busscheduletable
+                WHERE loadtime = (SELECT MAX(loadtime)
+                                FROM busscheduletable);
+    """
+    cur.execute(sql)
     for row in cur:
         busses.append(row[0])
         times.append(row[1])

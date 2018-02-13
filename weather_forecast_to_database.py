@@ -11,12 +11,12 @@ import requests
 import json
 import psycopg2
 from datetime import datetime
+from time import gmtime, strftime
 
 # Weather at the moment
 lat = '61.4528'
 lon = '23.8416'
-time_now = datetime.now()
-time_now = str(time_now.year) + "-" + str(time_now.month) + "-" + str(time_now.day) + "-" + str(time_now.hour) + "-" + str(time_now.minute) + "-" + str(time_now.second)
+time_now = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
 # Get weather information from asked moment
 url_now = 'http://api.weatherbit.io/v2.0/current?key=%s&lang=fi&lat=%s&lon=%s' % (cre.weather_api_key, lat, lon)
@@ -68,7 +68,7 @@ if (response.ok):
 try:
     conn = psycopg2.connect("dbname=%s user=%s host=%s password=%s" % (cre.dbname, cre.user, cre.host, cre.password))
     cur = conn.cursor()
-    cur.execute('TRUNCATE weathertable;')
+    cur.execute('Truncate weathertable;')
     conn.commit()
     sql = 'INSERT INTO weathertable(temperature, rf_temperature, icon_code, weather_type, type, loadtime) VALUES (%s, %s, %s, %s, %s, %s)'
     cur.executemany(sql, [weather_now, three_hour_forecast, tomorrow_forecast, day_after_tomorrow_forecast])

@@ -13,6 +13,7 @@ import json
 import psycopg2
 from datetime import date, datetime
 from operator import itemgetter
+from time import gmtime, strftime
 
 
 # Get data and create list which includes tuples that have busline and arrival time to the bus stop
@@ -75,8 +76,7 @@ for bus in arrivals:
 
 # Edit the data in such form that it will be easily written to the table, also add time of upload
 values_list = []
-time_now = datetime.now()
-time_now = str(time_now.year) + "-" + str(time_now.month) + "-" + str(time_now.day) + "-" + str(time_now.hour) + "-" + str(time_now.minute) + "-" + str(time_now.second)
+time_now = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 minutes = []
 busses = []
 for row in arrivals:
@@ -87,8 +87,6 @@ for row in arrivals:
 try:
     conn = psycopg2.connect("dbname=%s user=%s host=%s password=%s" % (cre.dbname, cre.user, cre.host, cre.password))
     cur = conn.cursor()
-    cur.execute('TRUNCATE busscheduletable;')
-    conn.commit()
     sql = 'INSERT INTO busscheduletable(line, time, loadtime) VALUES (%s, %s, %s)'
     cur.executemany(sql, values_list)
     conn.commit()

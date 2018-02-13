@@ -9,7 +9,10 @@
         <link rel="stylesheet" href={% static "login_style.css" %}>
     </head>
     <body>
-<!--        <div class="title"><h1> Kirjautumissivu</h1></div>  -->
+      {% if user.is_authenticated %}
+        <h1> Et voi kirjautua sisään ollessasi jo kirjautuneena. </h1>
+        <h3> Kirjaudu ulos, mikäli haluat kirjautua uudelleen sisään </h3>
+        {% else %}
         <p>
         </p>
         <div class="container">
@@ -27,7 +30,6 @@
                       <p><input type="password" name="password" id="password"></p>
                       <p><input type="submit" name="" value="Kirjaudu"></p>
                     </form>
-                    <a href="/register/"> Unohditko salasanan? </a>
                     <div id="tunnus">
                       <p name="tunnus" id="tunnus"> Ei vielä tunnusta: </p>
                     </div>
@@ -37,6 +39,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </body>
   </html>
 {% endblock %}

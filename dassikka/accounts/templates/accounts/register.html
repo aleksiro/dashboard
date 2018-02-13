@@ -9,6 +9,10 @@
         <link rel="stylesheet" href={% static "registration_style.css" %}>
     </head>
     <body>
+      {% if user.is_authenticated %}
+      <h1> Et voi rekisteröityä ollessasi kirjautunut </h1>
+      <h3> Kirjaudu ulos, jotta voit luoda uuden käyttäjätunnuksen </h3>
+      {% else %}
         <p>
         </p>
         <div class="container">
@@ -47,6 +51,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </body>
   </form>
 {% endblock %}

@@ -8,6 +8,7 @@
       <link rel="stylesheet" href={% static "registration_style.css" %}>
   </head>
   <body>
+      {% if user.is_authenticated %}
       <p>
       </p>
       <div class="container">
@@ -28,6 +29,9 @@
               </div>
           </div>
       </div>
+      {% else %}
+      <h1> Nähdäksesi tietosi, sinun tulee olla kirjautunut </h1>
+      {% endif %}
   </body>
 
 {% endblock %}

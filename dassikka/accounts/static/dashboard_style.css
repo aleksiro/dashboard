@@ -4,7 +4,7 @@ body
 	margin: 0;
 	padding: 0;
 	background: url('concrete-texture.png');
-	font-family: open sans;
+	font-family: helvetica;
 }
 
 .column {
@@ -20,4 +20,13 @@ body
     content: "";
     display: table;
     clear: both;
+}
+
+.base_container
+{
+  width: 90%;
+	background: rgba(255,255,255,0.8);
+	margin: 5px auto;
+	box-shadow: 0 15px 40px rgba(0,0,0,.3);
+  text-align: center;
 }

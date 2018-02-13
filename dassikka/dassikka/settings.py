@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'dassikka.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': cred.db_name ,
+        'NAME': cred.db_name,
         'USER': cred.db_user,
         'PASSWORD': cred.db_password,
         'HOST': 'localhost',

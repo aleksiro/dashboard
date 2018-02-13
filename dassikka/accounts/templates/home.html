@@ -6,18 +6,20 @@
     <head>
         <meta charset="utf-8">
         <title> Etusivu </title>
-        <link rel="stylesheet" href={% static "login_style.css" %}>
+        <link rel="stylesheet" href={% static "home_style.css" %}>
     </head>
-    <body>
-<!--        <div class="title"><h1> Kirjautumissivu</h1></div>  -->
-        <p>
-        </p>
-        {% if user.is_authenticated %}
-        <h1> Tervetuloa {{ user.first_name }}! </h1>
-        {% else %}
-        <h1> Tervetuloa!</h1>
-        <h3> Kirjaudu sisään tai rekisteröidy käyttäjäksi! </h3>
-        {% endif %}
-    </body>
+    <div class="base_container">
+      <body>
+  <!--        <div class="title"><h1> Kirjautumissivu</h1></div>  -->
+          <p>
+          </p>
+          {% if user.is_authenticated %}
+          <h1> Tervetuloa {{ user.first_name }}! </h1>
+          {% else %}
+          <h1> Tervetuloa!</h1>
+          <h3> Kirjaudu sisään tai rekisteröidy käyttäjäksi! </h3>
+          {% endif %}
+      </body>
+    </div>
   </html>
 {% endblock %}

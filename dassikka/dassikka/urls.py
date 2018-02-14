@@ -16,9 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from dassikka.views import login_redirect
+from dassikka.views import login_redirect, validate_username
 import accounts.views
 import dashboard.views
+
 
 
 urlpatterns = [
@@ -40,4 +41,7 @@ urlpatterns = [
     url(r'^reset-password/complete/$', auth_views.password_reset_complete, name='password_reset_complete'),
 
     url(r'^dashboard/$', dashboard.views.dashboard, name='dashboard'),
+    url(r'^dashboard/testpage/$', dashboard.views.dashboard_test, name='dashboard_test'),
+
+    url(r'^ajax/validate_username/$', validate_username, name='validate_username'),
 ]

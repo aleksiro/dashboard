@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+  <html>
+    <head>
+        <meta charset="utf-8">
+        <title> Dashboard </title>
+        <link rel="stylesheet" href={% static "css/dashboard_style.css" %}>
+    </head>
+    <body>
+      <div class="base_container">
+        {% if user.is_authenticated %}
+        <script src={% static "js/test_script.js" %}></script>
+        {% else %}
+        <h1> Sisältö nähtävissä vain kirjautuneille käyttäjille </h1>
+        {% endif %}
+      </div>
+    </body>
+  </html>
+{% endblock %}

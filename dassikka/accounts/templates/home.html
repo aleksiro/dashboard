@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <title> Etusivu </title>
-        <link rel="stylesheet" href={% static "home_style.css" %}>
+        <link rel="stylesheet" href={% static "css/home_style.css" %}>
     </head>
     <div class="base_container">
       <body>
@@ -17,7 +17,7 @@
           <h1> Tervetuloa {{ user.first_name }}! </h1>
           {% else %}
           <h1> Tervetuloa!</h1>
-          <h3> Kirjaudu sisään tai rekisteröidy käyttäjäksi! </h3>
+          <h3><a href="/login/"> Kirjaudu sisään</a> tai <a href="/register/">rekisteröidy käyttäjäksi! </a> </h3>
           {% endif %}
       </body>
     </div>

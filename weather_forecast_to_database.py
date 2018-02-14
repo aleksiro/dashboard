@@ -68,9 +68,7 @@ if (response.ok):
 try:
     conn = psycopg2.connect("dbname=%s user=%s host=%s password=%s" % (cre.dbname, cre.user, cre.host, cre.password))
     cur = conn.cursor()
-    cur.execute('Truncate weathertable;')
-    conn.commit()
-    sql = 'INSERT INTO weathertable(temperature, rf_temperature, icon_code, weather_type, type, loadtime) VALUES (%s, %s, %s, %s, %s, %s)'
+    sql = 'INSERT INTO dashboard_weathertable(temperature, rf_temperature, icon_code, weather_type, type, loadtime) VALUES (%s, %s, %s, %s, %s, %s)'
     cur.executemany(sql, [weather_now, three_hour_forecast, tomorrow_forecast, day_after_tomorrow_forecast])
     conn.commit()
     cur.close()

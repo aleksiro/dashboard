@@ -10,11 +10,14 @@
     </head>
     <body>
       <div class="base_container">
-        {% if user.is_authenticated %}
-        <script src={% static "js/test_script.js" %}></script>
-        {% else %}
-        <h1> Sisältö nähtävissä vain kirjautuneille käyttäjille </h1>
-        {% endif %}
+      <!--  {% if user.is_authenticated %} -->
+          <script src={% static "js/test_script.js" %}></script>
+          {% for bus in data %}
+            <p> Bussi {{ bus.line }} lähtee {{ bus.time }} minuutin kuluttua </p>
+          {% endfor %}
+        <!--{% else %}
+          <h1> Sisältö nähtävissä vain kirjautuneille käyttäjille </h1>
+        {% endif %} -->
       </div>
     </body>
   </html>

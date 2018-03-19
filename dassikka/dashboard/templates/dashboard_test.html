@@ -10,14 +10,49 @@
     </head>
     <body>
       <div class="base_container">
-      <!--  {% if user.is_authenticated %} -->
-          <script src={% static "js/test_script.js" %}></script>
-          {% for bus in data %}
-            <p> Bussi {{ bus.line }} lähtee {{ bus.time }} minuutin kuluttua </p>
-          {% endfor %}
-        <!--{% else %}
-          <h1> Sisältö nähtävissä vain kirjautuneille käyttäjille </h1>
-        {% endif %} -->
+        {% if user.is_authenticated %}
+        <div class="row">
+          <div class="column">
+            <h2>Column 1</h2>
+
+            <table id="bustable" align="center">
+              <tr>
+                <th>Bussilinja</th>
+                <th>Saapumiseen (min)</th>
+              </tr>
+              <tr>
+                {% for bus in data %}
+                <td>{{ bus.line }}</td>
+                <td>{{ bus.time }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+
+          <div class="column">
+            <h2>Column 2</h2>
+            {% for bus in data %}
+              <p> Bussi {{ bus.line }} lähtee {{ bus.time }} minuutin kuluttua </p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="column">
+            <h2>Column 3</h2>
+            <iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~aleksiroima/0/" height="350px" width="420px">
+            </iframe>
+          </div>
+
+          <div class="column">
+            <h2>Column 4</h2>
+            <iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~aleksiroima/0/" height="350px" width="420px">
+            </iframe>
+          </div>
+        </div>
+        {% else %}
+        <h1> Sisältö nähtävissä vain kirjautuneille käyttäjille </h1>
+        {% endif %}
       </div>
     </body>
   </html>

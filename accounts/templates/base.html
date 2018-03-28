@@ -1,0 +1,27 @@
+{% load staticfiles %}
+
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title> Pohja </title>
+        <link rel="stylesheet" href={% static "css/base_style.css" %}>
+    </head>
+    <div class="topnav">
+      {% if user.is_authenticated %}
+      <a class="active" href="/home/">Etusivu</a>
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/dashboard/testpage">Dashboard_test</a>
+      <a style="float:right" href="/logout/">Kirjaudu ulos</a>
+      <a style="float:right" href="/profile/">Profiili</a>
+      {% else %}
+      <a class="active" href="/home/">Etusivu</a>
+      <a style="float:right" href="/login/">Kirjaudu</a>
+      <a style="float:right" href="/register/">Rekisteröidy</a>
+      {% endif %}
+    </div>
+    {% block content %}
+    {% endblock %}
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    {% block javascript %}{% endblock %}
+</html>

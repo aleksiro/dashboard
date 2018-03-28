@@ -28,7 +28,7 @@ if (response.ok):
                     , json_data['app_temp']
                     , json_data['weather']['icon']
                     , json_data['weather']['description'] 
-                    , 'now'
+                    , 'Nyt'
                     , time_now]
 
 
@@ -54,13 +54,13 @@ if (response.ok):
     for row in json_forecast_data['data']:
         iteration += 1
         if (row['datetime'].split(':')[1] == wanted_near_forecast):
-            three_hour_forecast = [row['temp'], row['app_temp'], row['weather']['icon'], row['weather']['description'], '3h', time_now]
+            three_hour_forecast = [row['temp'], row['app_temp'], row['weather']['icon'], row['weather']['description'], '3h kuluttua', time_now]
             i += 1
         elif ((row['datetime'].split(':')[1] == '12') and (i == 1)):
-            tomorrow_forecast = [row['temp'], row['app_temp'], row['weather']['icon'], row['weather']['description'], '1d', time_now]
+            tomorrow_forecast = [row['temp'], row['app_temp'], row['weather']['icon'], row['weather']['description'], 'Huomenna', time_now]
             i += 1
         elif (((row['datetime'].split(':')[1] == '12') and (i == 2)) or (iteration == len(json_forecast_data['data']))):
-            day_after_tomorrow_forecast = [row['temp'], row['app_temp'], row['weather']['icon'], row['weather']['description'], '2d', time_now]
+            day_after_tomorrow_forecast = [row['temp'], row['app_temp'], row['weather']['icon'], row['weather']['description'], 'Ylihuomenna', time_now]
             i += 1
 
 
@@ -68,7 +68,7 @@ if (response.ok):
 try:
     conn = psycopg2.connect("dbname=%s user=%s host=%s password=%s" % (cre.dbname, cre.user, cre.host, cre.password))
     cur = conn.cursor()
-    sql = 'INSERT INTO dashboard_weathertable(temperature, rf_temperature, icon_code, weather_type, type, loadtime) VALUES (%s, %s, %s, %s, %s, %s)'
+    sql = 'INSERT INTO weather_table(temperature, rf_temperature, icon_code, weather_type, forecast_type, loadtime) VALUES (%s, %s, %s, %s, %s, %s)'
     cur.executemany(sql, [weather_now, three_hour_forecast, tomorrow_forecast, day_after_tomorrow_forecast])
     conn.commit()
     cur.close()

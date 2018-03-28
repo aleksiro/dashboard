@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+<!-- https://www.fir3net.com/Web-Development/Django/django.html -->
+{% block content %}
+  {% load static %}
+  <html>
+    <head>
+        <meta charset="utf-8">
+        <title> Uloskirjautumissivu </title>
+        <link rel="stylesheet" href={% static "css/logout_style.css" %}>
+    </head>
+    <body>
+<!--        <div class="title"><h1> Kirjautumissivu</h1></div>  -->
+        <p>
+        </p>
+        <div class="container">
+            <div class="left"></div>
+            <div class="right">
+                <div class="formBox">
+                    <form name="LoginForm" action="/login/" method="post">
+                        <p> Kiitos käynnistä, tervetuloa uudestaan! </p>
+                        <p>
+                            <input type="button" value="Kirjaudu uudelleen" onclick="location.href='/login/'">
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+  </html>
+{% endblock %}

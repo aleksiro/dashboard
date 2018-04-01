@@ -44,7 +44,12 @@ urlpatterns = [
     url(r'^dashboard/testpage/$', dashboard.views.dashboard_test, name='dashboard_test'),
 
     url(r'^api/pass_sense_data/$', dashboard.views.pass_sense_data, name='pass_sense_data'),
-    url(r'^api/pass_bus_data/$', dashboard.views.pass_bus_data, name='pass_bus_data'),
+    url(r'^dashboard/api/pass_sense_data/$', dashboard.views.pass_sense_data, name='pass_sense_data'),
+    url(r'^dashboard/testpage/api/pass_sense_data/$', dashboard.views.pass_sense_data, name='pass_sense_data'),
 
     url(r'^ajax/validate_username/$', validate_username, name='validate_username'),
+    url(r'^dashboard/testpage/ajax/pass_sense_data/$', dashboard.views.pass_sense_data, name='pass_sense_data'),
+
+    url(r'^dashboard/testpage/api/pass_bus_data/$', dashboard.views.pass_bus_data, name='pass_bus_data'),
+    url(r'^dashboard/testpage/api/pass_weather_data/$', dashboard.views.pass_weather_data, name='pass_weather_data'),
 ]

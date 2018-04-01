@@ -1,0 +1,278 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <title> Pohja </title>
+      <link rel="stylesheet" href={% static "css/dashboard_style.css" %}>
+
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+      <script type="text/javascript">
+      $(function () {
+        var chart;
+        function requestTempData() {
+          $.ajax({
+              url: 'api/pass_sense_data',
+              success: function(point) {
+                  var series = chart.series[0],
+                      shift = series.data.length > 20; // shift if the series is
+                                                       // longer than 20
+                  // add the point
+                  chart.series[0].addPoint(parseFloat(point[point.length - 1].temperature), true, shift, true);
+
+                  // call it again after one second
+                  setTimeout(requestTempData, 1000);
+              },
+              cache: false
+          });
+      }
+
+        var temperatures = new Array();
+        var measuretimes = new Array();
+        var humidities = new Array();
+
+        $.getJSON('http://127.0.0.1:8000/api/pass_sense_data', function(data) {
+          // Populate series
+          for (i = 1; i < 11; i++){
+              // data[data.length - i].measuretime
+              temperatures.push(parseFloat(data[data.length - i].temperature));
+          }
+          chart = new Highcharts.Chart({
+            chart: {
+                type: 'spline',
+                renderTo: 'chart',
+                events: {
+                  load: requestTempData
+                }
+            },
+            title: {
+                text: 'Sensehat mitattu lämpötila'
+            },
+            xAxis: {
+              //categories: measuretimes,
+              type: 'datetime',
+              //Sets tickInterval to 24 * 3600 * 1000 if display is by day
+              dateTimeLabelFormats : {
+                  day: '%H:%M:%S'
+              },
+              tickInterval: 5000,
+              tickPixelInterval: 150,
+              title: {
+                text: 'Mittausaika'
+              }
+            },
+            yAxis: [{
+                title: {
+                    text: 'Lämpötila',
+                      color: Highcharts.getOptions().colors[1]
+                    },
+                labels: {
+                  format: '{value} °C',
+                  style: {
+                      color: Highcharts.getOptions().colors[1]
+                  }
+                }
+              }],
+            series:
+           [{
+               name: 'Lämpötila',
+               showInLegend: false,
+               data: temperatures,
+               tooltip: {
+                  valueSuffix: '°C'
+              }
+           }]
+         });
+       });
+
+
+
+       var chart2;
+       function requestHumidData() {
+         $.ajax({
+             url: 'api/pass_sense_data',
+             success: function(point) {
+                 var series = chart2.series[0],
+                     shift = series.data.length > 20; // shift if the series is
+                                                      // longer than 20
+                 // add the point
+                 chart2.series[0].addPoint(parseFloat(point[point.length - 1].humidity), true, shift, true);
+
+                 // call it again after one second
+                 setTimeout(requestHumidData, 1000);
+             },
+             cache: false
+         });
+     }
+
+       var temperatures = new Array();
+       var measuretimes = new Array();
+       var humidities = new Array();
+
+       $.getJSON('http://127.0.0.1:8000/api/pass_sense_data', function(data) {
+         // Populate series
+         for (i = 1; i < 11; i++){
+             humidities.push(parseFloat(data[data.length - i].humidity));
+         }
+         chart2 = new Highcharts.Chart({
+           chart: {
+               type: 'spline',
+               renderTo: 'chart2',
+               events: {
+                 load: requestHumidData
+               }
+           },
+           title: {
+               text: 'Sensehat mitattu ilmankosteus'
+           },
+           xAxis: {
+             //categories: measuretimes,
+             type: 'datetime',
+             //Sets tickInterval to 24 * 3600 * 1000 if display is by day
+             dateTimeLabelFormats : {
+                 day: '%H:%M:%S'
+             },
+             tickInterval: 5000,
+             tickPixelInterval: 150,
+             title: {
+               text: 'Mittausaika'
+             }
+           },
+           yAxis: [{
+               title: {
+                   text: 'Ilmankosteus',
+                     color: '#517693'
+                   },
+               labels: {
+                 format: '{value} %',
+                 style: {
+                     color: '#517693'
+                 }
+               }
+             }],
+           series:
+          [{
+              name: 'Ilmankosteus',
+              showInLegend: false,
+              color: '#517693',
+              data: humidities,
+              tooltip: {
+                 valueSuffix: ' %'
+             }
+          }]
+        });
+      });
+
+      function updateTableData() {
+          $.ajax({
+              url: 'api/pass_bus_data',  // URL to your view that serves new info
+              success: function(point) {
+                var table = document.getElementById("bustable");
+                for (var i = 0, row; row = table.rows[i]; i++) {
+                   //iterate through rows
+                   //rows would be accessed using the "row" variable assigned in the for loop
+                if (i != 0){
+                   for (var j = 0, col; col = row.cells[j]; j++) {
+                     //iterate through columns
+                     //columns would be accessed using the "col" variable assigned in the for loop
+                     if (j == 0) {
+                       col.innerHTML = point[i].line;
+                     } else if (j == 1) {
+                       col.innerHTML = point[i].time;
+                     }
+                   }
+                 }
+                }
+              },
+              cache: false
+          });
+          $.ajax({
+              url: 'api/pass_weather_data',  // URL to your view that serves new info
+              success: function(point) {
+                var table = document.getElementById("weathertable");
+                for (var i = 0, row; row = table.rows[i]; i++) {
+                   //iterate through rows
+                   //rows would be accessed using the "row" variable assigned in the for loop
+                   if (i != 0) {
+                     for (var j = 0, col; col = row.cells[j]; j++) {
+                       //iterate through columns
+                       //columns would be accessed using the "col" variable assigned in the for loop
+                       if (j == 0) {
+                         col.innerHTML = point[i].forecast_type;
+                       } else if (j == 1) {
+                         col.innerHTML = point[i].temperature;
+                       } else if (j == 2) {
+                          col.innerHTML = point[i].rf_temperature
+                       } else if (j == 3) {
+                          col.innerHTML = '<img src="https://www.weatherbit.io/static/img/icons/"+point[i].icon_code+".png" style="width:40px;height:40px">point[i]'
+                       }
+                     }
+                   }
+                }
+                setTimeout(updateTableData, 60000);
+              },
+              cache: false
+              //$('#bustable').append(response);
+          });
+      }
+      updateTableData();
+    });
+
+      </script>
+  </head>
+  <div class="topnav">
+    <a class="active" href="/home/">Etusivu</a>
+    <a href="/dashboard/">Dashboard</a>
+    <a href="/dashboard/testpage">Dashboard_test</a>
+    <a style="float:right" href="/logout/">Kirjaudu ulos</a>
+    <a style="float:right" href="/profile/">Profiili</a>
+  </div>
+  <body>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+  <div class="row">
+    <div class="column">
+
+      <table id="bustable" align="center">
+        <tr>
+          <th>Bussilinja</th>
+          <th>Saapumiseen (min)</th>
+        </tr>
+        <tr>
+          {% for bus in busdata %}
+          <td>{{ bus.line }}</td>
+          <td>{{ bus.time }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div class="column">
+    <div id="chart" style="width:80%; height:400px;"></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+      <table id="weathertable" align="center">
+        <tr>
+          <th></th>
+          <th>Lämpötila</th>
+          <th>Tuntuu kuin</th>
+          <th></th>
+        </tr>
+        <tr>
+          {% for fore in weatherdata %}
+          <td>{{ fore.forecast_type }}</td>
+          <td>{{ fore.temperature }}</td>
+          <td>{{ fore.rf_temperature }}</td>
+          <td><img src="https://www.weatherbit.io/static/img/icons/{{ fore.icon_code }}.png" style="width:40px;height:40px"></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  <div class="column">
+    <div id="chart2" style="width:80%; height:400px;"></div>
+  </div>
+  </div>
+  </body>
+</html>

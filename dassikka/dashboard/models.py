@@ -32,8 +32,7 @@ class weathertable(models.Model):
 class sensehattable(models.Model):
     temperature = models.DecimalField(decimal_places=2, max_digits=5)
     humidity = models.DecimalField(decimal_places=2, max_digits=5)
-    measuretime = models.CharField(max_length=20)
-    loadtime = models.CharField(max_length=17)
+    loadtime = models.CharField(max_length=20)
 
     class Meta:
         db_table = 'sense_hat_table'

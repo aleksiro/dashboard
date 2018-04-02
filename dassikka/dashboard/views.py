@@ -24,7 +24,6 @@ def dashboard_test(request):
 
 def pass_bus_data(request):
     data = models.busscheduletable.objects.filter(loadtime=models.busscheduletable.objects.all().aggregate(Max('loadtime'))['loadtime__max']).all().values("line", "time")
-    print(data)
     return JsonResponse(list(data), safe=False)
 
 def pass_weather_data(request):
@@ -32,5 +31,5 @@ def pass_weather_data(request):
     return JsonResponse(list(data), safe=False)
 
 def pass_sense_data(request):
-    data = models.sensehattable.objects.all().values("measuretime", "temperature", "humidity")
+    data = models.sensehattable.objects.all().values("loadtime", "temperature", "humidity")
     return JsonResponse(list(data), safe=False)

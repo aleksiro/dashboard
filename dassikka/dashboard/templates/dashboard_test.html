@@ -176,9 +176,9 @@
                      //iterate through columns
                      //columns would be accessed using the "col" variable assigned in the for loop
                      if (j == 0) {
-                       col.innerHTML = point[i].line;
+                       col.innerHTML = point[i-1].line;
                      } else if (j == 1) {
-                       col.innerHTML = point[i].time;
+                       col.innerHTML = point[i-1].time;
                      }
                    }
                  }
@@ -198,18 +198,18 @@
                        //iterate through columns
                        //columns would be accessed using the "col" variable assigned in the for loop
                        if (j == 0) {
-                         col.innerHTML = point[i].forecast_type;
+                         col.innerHTML = point[i-1].forecast_type;
                        } else if (j == 1) {
-                         col.innerHTML = point[i].temperature;
+                         col.innerHTML = point[i-1].temperature;
                        } else if (j == 2) {
-                          col.innerHTML = point[i].rf_temperature
+                          col.innerHTML = point[i-1].rf_temperature
                        } else if (j == 3) {
-                          col.innerHTML = '<img src="https://www.weatherbit.io/static/img/icons/"+point[i].icon_code+".png" style="width:40px;height:40px">point[i]'
+                          col.innerHTML = '<img src="https://www.weatherbit.io/static/img/icons/' + point[i-1].icon_code + '.png" style="width:40px;height:40px">';
                        }
                      }
                    }
                 }
-                setTimeout(updateTableData, 60000);
+                setTimeout(updateTableData, 30000);
               },
               cache: false
               //$('#bustable').append(response);
